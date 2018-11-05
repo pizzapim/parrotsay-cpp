@@ -8,6 +8,12 @@ using std::ifstream;  using std::getline;
 using std::string;    using std::vector;
 using std::endl;
 
+void replace_char(char *ch) {
+  if (*ch == '\t' || *ch == '\a' || *ch == '\b' || *ch == '\v' || *ch == '\f' || *ch == '\r' || *ch == '\e') {
+    *ch = ' ';
+  }
+}
+
 void print_hborder(int length) {
   cout << string(length + 4, '-') << endl;
 }
@@ -33,6 +39,14 @@ int max_string_length(const vector<string> *strings) {
   return max_len;
 }
 
+void sanitize_strings(vector<string> *lines) {
+  for (vector<string>::iterator v_it = lines->begin(); v_it != lines->end(); ++v_it) {
+    for(string::iterator str_it = v_it->begin(); str_it != v_it->end(); ++str_it) {
+      replace_char(&*str_it);
+    }
+  }
+}
+
 void print_text() {
   string line;
   vector<string> lines;
@@ -41,6 +55,8 @@ void print_text() {
   while (getline(cin, line)) {
     lines.push_back(line);
   }
+
+  sanitize_strings(&lines);
 
   max_len = max_string_length(&lines);
 
