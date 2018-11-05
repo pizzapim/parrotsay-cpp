@@ -3,10 +3,23 @@
 #include <string>
 #include <vector>
 
+#include <unistd.h>
+#include <limits.h>
+
 using std::cout;      using std::cin;
 using std::ifstream;  using std::getline;
 using std::string;    using std::vector;
 using std::endl;
+
+// https://ubuntuforums.org/archive/index.php/t-1140674.html
+string getpath() {
+  char buf[PATH_MAX + 1];
+  if (readlink("/proc/self/exe", buf, sizeof(buf) - 1) == -1) {
+    throw std::string("readlink() failed");
+  }
+  string str(buf);
+  return str.substr(0, str.rfind('/'));
+}
 
 void replace_char(char *ch) {
   if (*ch == '\t' || *ch == '\a' || *ch == '\b' || *ch == '\v' || *ch == '\f' || *ch == '\r' || *ch == '\e') {
@@ -66,7 +79,7 @@ void print_text() {
 }
 
 void print_parrot() {
-  ifstream infile("parrot.txt");
+  ifstream infile(getpath() + "/parrot.txt");
   string line;
 
   while (getline(infile, line)) {
